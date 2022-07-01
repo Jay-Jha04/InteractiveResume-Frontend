@@ -8,7 +8,6 @@ const ProjectSettings = () => {
   const [showModal, setShowModal] = useState(false);
   const [project, setProject] = useState({});
   const [projects, setProjects] = useState([]);
-  console.log(project);
 
   useEffect(() => {
     async function fetchDate() {

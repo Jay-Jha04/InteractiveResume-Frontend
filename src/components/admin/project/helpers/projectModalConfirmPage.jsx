@@ -1,4 +1,3 @@
-import captilizeString from "../../../../utills/captilizeString";
 import Badge from "../../../common/badge";
 
 const ProjectModalConfirmPage = ({ payload, skills }) => {
@@ -26,38 +25,31 @@ const ProjectModalConfirmPage = ({ payload, skills }) => {
           {`${payload["Information"]["startYear"]} ${payload["Information"]["startMonth"]} to ${endDate}`}
         </p>
         <li>
-          Github Url -{" "}
+          {`Github Url - `}
           <a href={payload["Information"]["githubUrl"]}>
             {payload["Information"]["githubUrl"]}
           </a>
         </li>
         <li>
-          Project Url -{" "}
+          {`Project Url - `}
           <a href={payload["Information"]["githubUrl"]}>
             {payload["Information"]["githubUrl"]}
           </a>
         </li>
         <li>
-          Techstack -{" "}
-          {payload["Skills"]["techStack"].map((tech) => {
-            const skill = skills.find((skill) =>
-              skill.framework
-                ? skill.framework._id === tech
-                : skill.language._id === tech
-            );
-            const name = skill.framework
-              ? captilizeString(skill.framework["name"])
-              : captilizeString(skill.language["name"]);
-
+          {`Techstack - `}
+          {Object.keys(payload["Skills"]).map((tech) => {
             return (
-              <span key={tech} className="me-1">
-                <Badge
-                  text={name}
-                  color="secondary"
-                  float="none"
-                  opacity="75"
-                />
-              </span>
+              payload["Skills"][tech] && (
+                <span key={tech} className="me-1">
+                  <Badge
+                    text={tech}
+                    color="secondary"
+                    float="none"
+                    opacity="75"
+                  />
+                </span>
+              )
             );
           })}
         </li>
