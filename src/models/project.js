@@ -7,6 +7,14 @@ const projectImageValidation = (value, helper) => {
   return value;
 };
 
+const projectSkillsValidation = (value, helper) => {
+  const selectedSkills = Object.values(value).filter((v) => v === true);
+  if (selectedSkills.length < 2) {
+    throw new Error();
+  }
+  return value;
+};
+
 const projectSchema = {
   Information: {
     title: Joi.string().required().label("Title"),
@@ -22,11 +30,10 @@ const projectSchema = {
     endMonth: Joi.string().required().label("End date"),
     endYear: Joi.string().required().label("End date"),
   },
-  Skills: {
-    techStack: Joi.array()
-      .min(2)
-      .rule({ message: "Select atleast 2 skills used in project" }),
-  },
+
+  Skills: Joi.object().custom(projectSkillsValidation).messages({
+    "any.custom": "Select atleast 2 skills used in projects",
+  }),
 };
 
 export const projectViewModel = {
@@ -43,9 +50,7 @@ export const projectViewModel = {
     endMonth: "",
     endYear: "",
   },
-  Skills: {
-    techStack: [],
-  },
+  Skills: {},
 };
 
 export const validateProperty = (name, files, value, page) => {
@@ -65,16 +70,25 @@ export const validateProperty = (name, files, value, page) => {
 };
 
 export const validateProject = (project, page) => {
-  const proj = { ...project[page] };
-  const projSchema = { ...projectSchema[page] };
-  if (proj["isCurrentlyWorking"]) {
-    delete proj["endYear"];
-    delete proj["endMonth"];
-    delete projSchema["endMonth"];
-    delete projSchema["endYear"];
+  let proj = null;
+  let projSchema = null;
+
+  if (page === "Information") {
+    proj = { ...project[page] };
+    projSchema = { ...projectSchema[page] };
+    if (proj["isCurrentlyWorking"]) {
+      delete proj["endYear"];
+      delete proj["endMonth"];
+      delete projSchema["endMonth"];
+      delete projSchema["endYear"];
+    }
+    delete proj["isCurrentlyWorking"];
+    delete proj["images"];
+  } else {
+    proj = { [page]: project[page] };
+    projSchema = { [page]: projectSchema[page] };
   }
-  delete proj["isCurrentlyWorking"];
-  delete proj["images"];
+
   const schema = Joi.object(projSchema);
   return schema.validate(proj, { abortEarly: false });
 };

@@ -2,7 +2,6 @@ import captilizeString from "../../../../utills/captilizeString";
 import { InfoCircleFilled } from "@ant-design/icons";
 
 const ProjectModalSkillsPage = ({ skills, onChange, payload, error }) => {
-  console.log("Skill section", payload);
   return (
     <>
       {error && (
@@ -17,23 +16,19 @@ const ProjectModalSkillsPage = ({ skills, onChange, payload, error }) => {
           <span>{error}</span>
         </p>
       )}
-      {skills.map(({ _id, framework, language }, index) => {
+      {skills.map(({ _id, framework, language }) => {
         const skill = framework
           ? captilizeString(framework.name)
           : captilizeString(language.name);
-        const skillId = framework ? framework._id : language._id;
         return (
           <div key={_id} className="form-check">
             <input
               className="form-check-input fs-5"
               type="checkbox"
-              name="techStack"
-              value={skillId}
+              name="techstack"
+              id={skill}
               onChange={onChange}
-              checked={
-                payload["techStack"].find((stack) => stack === skillId) !==
-                undefined
-              }
+              checked={payload[skill]}
             />
             <label className="form-check-label ms-2 fs-5">{skill}</label>
           </div>

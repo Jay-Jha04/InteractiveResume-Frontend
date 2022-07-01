@@ -39,7 +39,7 @@ const ProjectModalSection = ({ setShowModal, setProject }) => {
           onChange={(e) => handleChange(e)}
           payload={payload["Skills"]}
           skills={skills}
-          error={errors["techStack"]}
+          error={errors["Skills"]}
         />
       ),
     },
@@ -53,7 +53,7 @@ const ProjectModalSection = ({ setShowModal, setProject }) => {
   const handleChange = (e) => {
     e.stopPropagation();
     const pageId = pages[page - 1]["id"];
-    const { name, value, checked, files } = e.target;
+    const { name, value, checked, files, id } = e.target;
     const { error } = validateProperty(name, files, value, pageId);
 
     if (error) {
@@ -65,7 +65,7 @@ const ProjectModalSection = ({ setShowModal, setProject }) => {
       setErrors(errors);
     }
 
-    let pagePayload = {};
+    let pagePayload = null;
     switch (name) {
       case "isCurrentlyWorking":
         pagePayload = { ...payload[pageId], [name]: checked };
@@ -101,19 +101,13 @@ const ProjectModalSection = ({ setShowModal, setProject }) => {
           return { ...prevState, [pageId]: pagePayload };
         });
 
-      case "techStack":
-        pagePayload = { ...payload[pageId] };
-        if (checked) {
-          pagePayload[name].push(value);
-
-          return setPayload((prevState) => {
-            return { ...prevState, [pageId]: pagePayload };
-          });
-        }
-        pagePayload[name] = pagePayload[name].filter((tech) => tech !== value);
+      case "techstack":
+        errors[pageId] && delete errors[pageId];
+        pagePayload = { ...payload[pageId], [id]: checked };
         return setPayload((prevState) => {
           return { ...prevState, [pageId]: pagePayload };
         });
+
       case "images":
         return setSelectedImage(files);
       default:
