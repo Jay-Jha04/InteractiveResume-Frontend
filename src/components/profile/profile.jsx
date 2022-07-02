@@ -19,7 +19,7 @@ const Profile = () => {
 
   return (
     <>
-      {Object.keys(profile).length > 0 && Object.keys(profileImage).length > 0 && (
+      {Object.keys(profile).length > 0 && (
         <>
           <Header data={profile} profileImage={profileImage} />
           <Outlet context={[profile]} />

@@ -10,6 +10,7 @@ import ExperienceSettings from "./components/admin/experienceSettings";
 import SkillSettings from "./components/admin/skillSettings";
 import ProfileSettings from "./components/admin/profileSettings";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "antd/dist/antd.less";
 import "./App.css";
 

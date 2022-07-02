@@ -24,7 +24,12 @@ const Header = ({ data, profileImage }) => {
     <header id="main-header">
       <div className="row g-0">
         <div className="col-lg-4 col-md-5">
-          <img src={`data:${contentType};base64,${imageBase64}`} alt="..." />
+          {Object.keys(profileImage).length > 0 && (
+            <img src={`data:${contentType};base64,${imageBase64}`} />
+          )}
+          {Object.keys(profileImage).length === 0 && (
+            <img src="/NoUserImagePlaceholder.png" />
+          )}
         </div>
         <div className="col-lg-8 col-md-7">
           <div className="flex flex-column">

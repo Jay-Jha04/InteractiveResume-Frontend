@@ -11,7 +11,7 @@ import {
 import { postProject, uploadProjectImages } from "../../../../services/project";
 import ProjectModalConfirmPage from "./projectModalConfirmPage";
 
-const ProjectModalSection = ({ setShowModal, setProject }) => {
+const ProjectModalSection = ({ setShowModal, setProjects }) => {
   const [skills, setSkills] = useState([]);
   const [payload, setPayload] = useState(projectViewModel);
   const [errors, setErrors] = useState({});
@@ -136,7 +136,9 @@ const ProjectModalSection = ({ setShowModal, setProject }) => {
         return setPage((prevState) => prevState - 1);
       case "save":
         const res = await postProject(payload);
-        setProject(res);
+        setProjects((prevState) => {
+          return [...prevState, res];
+        });
         return setShowModal(false);
       case "upload":
         const { error: uploadImagesError } = validateProperty(

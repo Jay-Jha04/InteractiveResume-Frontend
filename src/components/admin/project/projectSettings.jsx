@@ -6,7 +6,6 @@ import { getProjects } from "../../../services/project";
 
 const ProjectSettings = () => {
   const [showModal, setShowModal] = useState(false);
-  const [project, setProject] = useState({});
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
@@ -61,11 +60,6 @@ const ProjectSettings = () => {
                       <td>{proj["title"]}</td>
                       <td>{proj["start_date"]}</td>
                       <td>{proj["end_date"]}</td>
-                      <td>
-                        <a href="details.html" className="btn btn-success">
-                          <i className="fas fa-angle-double-right"></i> Edit
-                        </a>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -84,7 +78,7 @@ const ProjectSettings = () => {
       >
         <ProjectModalSection
           setShowModal={setShowModal}
-          setProject={setProject}
+          setProjects={setProjects}
         />
       </CSSTransition>
     </>
