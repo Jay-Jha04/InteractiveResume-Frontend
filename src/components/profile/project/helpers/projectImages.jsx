@@ -5,7 +5,7 @@ import { Carousel } from "react-responsive-carousel";
 
 const ProjectImages = ({ projectId, setShowModal }) => {
   const [images, setImages] = useState([]);
-  const buttons = [{ id: "close", text: "Close" }];
+  const buttons = [{ id: "close", text: "Close", color: "success" }];
 
   useEffect(() => {
     async function fetchData() {

@@ -1,4 +1,12 @@
-const Modal = ({ children, title, onClick, buttons, header, backdrop }) => {
+const Modal = ({
+  children,
+  title,
+  onClick,
+  buttons,
+  header,
+  titleInformation,
+  backdrop,
+}) => {
   const renderHeaderSection = () => {
     if (header) {
       return header;
@@ -7,6 +15,7 @@ const Modal = ({ children, title, onClick, buttons, header, backdrop }) => {
       <div className="modal-header">
         <div className="modal-title">
           <h5>{title}</h5>
+          <p>{titleInformation}</p>
         </div>
         <button
           type="button"
@@ -25,7 +34,7 @@ const Modal = ({ children, title, onClick, buttons, header, backdrop }) => {
           key={bt.id}
           type="button"
           name={bt.id}
-          className={`btn btn-success ${bt?.disabled}`}
+          className={`btn btn-${bt.color} ${bt?.disabled}`}
           onClick={onClick}
         >
           {bt.text}
