@@ -6,7 +6,7 @@ import Project from "./components/profile/project/project";
 import Contact from "./components/profile/contact";
 import Profile from "./components/profile/profile";
 import ProjectSettings from "./components/admin/project/projectSettings";
-import ExperienceSettings from "./components/admin/experienceSettings";
+import ExperienceSettings from "./components/admin/experience/experienceSettings";
 import SkillSettings from "./components/admin/skillSettings";
 import ProfileSettings from "./components/admin/profileSettings";
 import "bootstrap/dist/css/bootstrap.min.css";

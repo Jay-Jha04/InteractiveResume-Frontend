@@ -15,13 +15,28 @@ const MultipageModal = ({
   errs["images"] && delete errs["images"];
   const disabled = Object.keys(errs).length > 0 ? "disabled" : "";
   if (page === 1) {
-    buttons.push({ id: "next", text: "Next", disabled: disabled });
+    buttons.push({
+      id: "next",
+      text: "Next",
+      color: "success",
+      disabled: disabled,
+    });
   } else if (page === pages.length) {
-    buttons.push({ id: "back", text: "Back" });
-    buttons.push({ id: "save", text: "Save", disabled: disabled });
+    buttons.push({ id: "back", text: "Back", color: "success" });
+    buttons.push({
+      id: "save",
+      text: "Save",
+      color: "success",
+      disabled: disabled,
+    });
   } else {
-    buttons.push({ id: "back", text: "Back" });
-    buttons.push({ id: "next", text: "Next", disabled: disabled });
+    buttons.push({ id: "back", text: "Back", color: "success" });
+    buttons.push({
+      id: "next",
+      text: "Next",
+      color: "success",
+      disabled: disabled,
+    });
   }
 
   const renderHeaderSection = () => {
