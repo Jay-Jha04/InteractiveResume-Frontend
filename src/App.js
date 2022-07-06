@@ -7,7 +7,7 @@ import Contact from "./components/profile/contact";
 import Profile from "./components/profile/profile";
 import ProjectSettings from "./components/admin/project/projectSettings";
 import ExperienceSettings from "./components/admin/experience/experienceSettings";
-import SkillSettings from "./components/admin/skillSettings";
+import SkillSettings from "./components/admin/skill/skillSettings";
 import ProfileSettings from "./components/admin/profileSettings";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-responsive-carousel/lib/styles/carousel.min.css";

@@ -7,3 +7,9 @@ export async function getSkills() {
 
   return skills.data;
 }
+
+export async function postSkill(payload) {
+  const skill = await axios.post(`${baseUrl}/skills`, payload);
+
+  return skill.data;
+}

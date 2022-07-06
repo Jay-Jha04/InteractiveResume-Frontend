@@ -1,3 +1,6 @@
 export default function captilizeString(str) {
-  return str.replace(str.charAt(0), str.charAt(0).toUpperCase());
+  if (typeof str === "string") {
+    return str.replace(str.charAt(0), str.charAt(0).toUpperCase());
+  }
+  return str;
 }
