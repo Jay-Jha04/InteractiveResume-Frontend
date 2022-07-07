@@ -1,21 +1,27 @@
 import { InfoCircleFilled } from "@ant-design/icons";
 
-const FileInput = ({ onChange, onClick, name, error, imageIds }) => {
+const FileInput = ({
+  onClick,
+  btnName,
+  error,
+  imageIds,
+  color = "success",
+  ...rest
+}) => {
   return (
     <div className="form-group mt-2 mb-3">
       <div className="input-group">
         <input
           type="file"
-          name="images"
-          onChange={onChange}
           className="form-control"
           aria-label="Upload"
           multiple
+          {...rest}
         />
         <button
-          name={name}
+          name={btnName}
           onClick={onClick}
-          className="btn btn-outline-success "
+          className={`btn btn-outline-${color}`}
           type="button"
         >
           Upload
@@ -33,8 +39,8 @@ const FileInput = ({ onChange, onClick, name, error, imageIds }) => {
           <span>{error}</span>
         </p>
       )}
-      {imageIds.length > 0 && (
-        <p className="text-success mt-2">
+      {imageIds?.length > 0 && (
+        <p className={`text-${color} mt-2`}>
           <InfoCircleFilled
             style={{
               fontSize: "1.3rem",
@@ -43,10 +49,8 @@ const FileInput = ({ onChange, onClick, name, error, imageIds }) => {
             }}
           />
           <span>
-            Successfully uploaded{" "}
-            {imageIds.length > 1
-              ? `${imageIds.length} images`
-              : `${imageIds.length} image`}
+            {`Successfully uploaded `}
+            {imageIds.length > 1 ? `${imageIds.length} images` : "image"}
           </span>
         </p>
       )}

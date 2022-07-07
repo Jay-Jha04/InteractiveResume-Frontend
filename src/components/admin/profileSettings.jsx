@@ -1,62 +1,180 @@
-import { useState } from "react";
-import { CSSTransition } from "react-transition-group";
-import { ProjectOutlined, PlusOutlined } from "@ant-design/icons";
-import Modal from "../common/modal";
+import { useState, useEffect } from "react";
+import { ProfileOutlined } from "@ant-design/icons";
+import Input from "../common/input";
+import FileInput from "../common/fileInput";
+import TextArea from "../common/textArea";
+import {
+  mapModelToView,
+  ProfileViewModel,
+  validateProfile,
+  validateProfilePic,
+  validateProperty,
+} from "../../models/profile";
+import {
+  getProfile,
+  postProfileImage,
+  updateProfile,
+} from "../../services/profile";
 
 const ProfileSettings = () => {
-  const [showModal, setShowModal] = useState(false);
+  const [payload, setPayload] = useState(ProfileViewModel);
+  const [profilePic, setProfilePic] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [isUpdated, setIsUpdated] = useState(false);
+  const [profile, setProfile] = useState({});
+
+  const handleChange = (e) => {
+    e.stopPropagation();
+    setIsUpdated(false);
+
+    let { name, value, files } = e.target;
+    const { error } = validateProperty(name, value);
+
+    if (error) {
+      setErrors((prevState) => {
+        return { ...prevState, [name]: error.details[0].message };
+      });
+    } else {
+      errors[name] && delete errors[name];
+    }
+
+    if (name === "profilePic") {
+      payload[name] = [];
+      return setProfilePic(files);
+    }
+
+    return setPayload((prevState) => {
+      return { ...prevState, [name]: value };
+    });
+  };
+
+  const handleClick = async (e) => {
+    e.preventDefault();
+    setIsUpdated(false);
+
+    const { name } = e.target;
+    switch (name) {
+      case "upload":
+        const { error } = validateProfilePic(name, profilePic);
+
+        if (error) {
+          return setErrors((prevState) => {
+            return { ...prevState, profilePic: error.details[0].message };
+          });
+        }
+
+        const profilePicId = await postProfileImage(profilePic);
+
+        return setPayload((prevState) => {
+          return { ...prevState, profilePic: [profilePicId] };
+        });
+
+      case "update":
+        const { error: profileErrors } = validateProfile(payload);
+        if (profileErrors) {
+          const err = { ...errors };
+          profileErrors.details.map(
+            (detail) => (err[detail.path[0]] = detail.message)
+          );
+          return setErrors(err);
+        }
+
+        const res = await updateProfile(profile?._id, payload);
+
+        setPayload(ProfileViewModel);
+        setErrors({});
+        setProfilePic([]);
+        setProfile(res);
+        return setIsUpdated(true);
+
+      default:
+        setPayload(ProfileViewModel);
+        setErrors({});
+        setProfilePic([]);
+        return setIsUpdated(false);
+    }
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await getProfile();
+      setProfile(res);
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const mapProfile = mapModelToView(profile);
+    setPayload(mapProfile);
+  }, [profile]);
 
   return (
-    <>
-      <div className="row mt-3">
-        <div className="row">
-          <div className="col-sm-4">
-            <div className="input-group">
-              <span className="input-group-text fs-3">
-                <PlusOutlined />
-              </span>
-              <button
-                className="btn btn-success w-50"
-                onClick={() => setShowModal(true)}
-              >
-                Add Projects
-              </button>
-            </div>
-          </div>
-          <div className="col-sm-8">
-            <div className="alert alert-success">
-              <ProjectOutlined style={{ fontSize: "2em" }} /> Total number of
-              projects is
-            </div>
-          </div>
+    <div className="row justify-content-center">
+      {isUpdated && (
+        <div className="col-8 alert alert-primary w-50 my-3">
+          <ProfileOutlined style={{ fontSize: "2em", marginRight: "0.2em" }} />
+          Profile Updated successfully...
         </div>
-        <div className="row mt-5">
-          <div className="col-12">
-            <table className="table table-striped">
-              <thead className="thead-dark">
-                <tr>
-                  <th>#</th>
-                  <th>Project Title</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th></th>
-                </tr>
-              </thead>
-            </table>
-          </div>
+      )}
+
+      <div className="row">
+        <div className="col-sm-5 g-0" style={{ marginRight: "9.3em" }}>
+          <Input
+            label="First Name"
+            name="firstName"
+            type="text"
+            error={errors["firstName"]}
+            value={payload["firstName"]}
+            onChange={(e) => handleChange(e)}
+          />
+        </div>
+        <div className="col-sm-5 g-0">
+          <Input
+            label="Last Name"
+            name="lastName"
+            type="text"
+            value={payload["lastName"]}
+            onChange={(e) => handleChange(e)}
+          />
         </div>
       </div>
-      <CSSTransition
-        in={showModal}
-        timeout={500}
-        classNames="modal"
-        unmountOnExit
-        onEnter={() => (document.body.style.overflow = "hidden")}
-        onExited={() => (document.body.style.overflow = "auto")}
-      >
-        <Modal onClick={() => setShowModal(false)}>Hello world</Modal>
-      </CSSTransition>
-    </>
+      <Input
+        label="Location"
+        name="location"
+        type="text"
+        error={errors["location"]}
+        value={payload["location"]}
+        onChange={(e) => handleChange(e)}
+      />
+      <label>Update Profile Picture</label>
+      <FileInput
+        btnName="upload"
+        name="profilePic"
+        color="primary"
+        imageIds={payload["profilePic"]}
+        error={errors["profilePic"]}
+        onChange={(e) => handleChange(e)}
+        onClick={(e) => handleClick(e)}
+      />
+      <TextArea
+        name="aboutYourself"
+        label="About Yourself"
+        rows="3"
+        error={errors["aboutYourself"]}
+        value={payload["aboutYourself"]}
+        onChange={(e) => handleChange(e)}
+      />
+      <div className="row justify-content-center">
+        <button
+          type="button"
+          className="btn btn-outline-primary w-50"
+          name="update"
+          onClick={(e) => handleClick(e)}
+        >
+          Update Profile
+        </button>
+      </div>
+    </div>
   );
 };
 
