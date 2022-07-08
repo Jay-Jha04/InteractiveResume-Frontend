@@ -11,17 +11,21 @@ import {
   validateProperty,
 } from "../../models/profile";
 import {
+  deleteProfilePic,
   getProfile,
+  getProfileImage,
   postProfileImage,
   updateProfile,
 } from "../../services/profile";
 
 const ProfileSettings = () => {
   const [payload, setPayload] = useState(ProfileViewModel);
-  const [profilePic, setProfilePic] = useState([]);
   const [errors, setErrors] = useState({});
+  const [currentProfilePic, setCurrentProfilePic] = useState({});
+  const [updatedProfilePic, setUpdatedProfilePic] = useState([]);
   const [isUpdated, setIsUpdated] = useState(false);
-  const [profile, setProfile] = useState({});
+  const [isUploading, setIsUploading] = useState(false);
+  const [didUploaded, setDidUploaded] = useState(false);
 
   const handleChange = (e) => {
     e.stopPropagation();
@@ -39,8 +43,7 @@ const ProfileSettings = () => {
     }
 
     if (name === "profilePic") {
-      payload[name] = [];
-      return setProfilePic(files);
+      return setUpdatedProfilePic(files);
     }
 
     return setPayload((prevState) => {
@@ -55,7 +58,7 @@ const ProfileSettings = () => {
     const { name } = e.target;
     switch (name) {
       case "upload":
-        const { error } = validateProfilePic(name, profilePic);
+        const { error } = validateProfilePic(name, updatedProfilePic);
 
         if (error) {
           return setErrors((prevState) => {
@@ -63,14 +66,21 @@ const ProfileSettings = () => {
           });
         }
 
-        const profilePicId = await postProfileImage(profilePic);
+        const profilePic = await postProfileImage(updatedProfilePic);
 
-        return setPayload((prevState) => {
-          return { ...prevState, profilePic: [profilePicId] };
-        });
+        if (profilePic) {
+          setPayload((prevState) => {
+            return { ...prevState, profilePic: [profilePic._id] };
+          });
+        }
+
+        setCurrentProfilePic(profilePic);
+        setUpdatedProfilePic([]);
+        return setDidUploaded(true);
 
       case "update":
         const { error: profileErrors } = validateProfile(payload);
+
         if (profileErrors) {
           const err = { ...errors };
           profileErrors.details.map(
@@ -79,18 +89,39 @@ const ProfileSettings = () => {
           return setErrors(err);
         }
 
-        const res = await updateProfile(profile?._id, payload);
+        const res = await updateProfile(payload);
 
-        setPayload(ProfileViewModel);
+        if (res) {
+          const mapProfile = mapModelToView(res);
+          setPayload(mapProfile);
+        }
+
         setErrors({});
-        setProfilePic([]);
-        setProfile(res);
+        setUpdatedProfilePic([]);
+        setDidUploaded(false);
+        setIsUploading(false);
         return setIsUpdated(true);
 
+      case "updateProfilePic":
+        return setIsUploading(true);
+
+      case "removeProfilePic":
+        setUpdatedProfilePic([]);
+        const resStatus = await deleteProfilePic(currentProfilePic._id);
+
+        if (resStatus === 204) {
+          setCurrentProfilePic({});
+        }
+        setPayload((prevState) => {
+          return { ...prevState, profilePic: [] };
+        });
+        return setIsUploading(false);
+
       default:
-        setPayload(ProfileViewModel);
         setErrors({});
-        setProfilePic([]);
+        setUpdatedProfilePic([]);
+        setDidUploaded(false);
+        setIsUploading(false);
         return setIsUpdated(false);
     }
   };
@@ -98,26 +129,32 @@ const ProfileSettings = () => {
   useEffect(() => {
     async function fetchData() {
       const res = await getProfile();
-      setProfile(res);
+      const mapProfile = mapModelToView(res);
+
+      if (res["profile_image"]) {
+        const pic = await getProfileImage(res["profile_image"]);
+        setCurrentProfilePic(pic);
+      }
+
+      setPayload(mapProfile);
     }
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const mapProfile = mapModelToView(profile);
-    setPayload(mapProfile);
-  }, [profile]);
-
   return (
-    <div className="row justify-content-center">
+    <div className="row ">
       {isUpdated && (
-        <div className="col-8 alert alert-primary w-50 my-3">
-          <ProfileOutlined style={{ fontSize: "2em", marginRight: "0.2em" }} />
-          Profile Updated successfully...
+        <div className="row justify-content-center">
+          <div className="col-8 alert alert-primary w-50 my-3">
+            <ProfileOutlined
+              style={{ fontSize: "2em", marginRight: "0.2em" }}
+            />
+            Profile Updated successfully...
+          </div>
         </div>
       )}
 
-      <div className="row">
+      <div className="row ms-1">
         <div className="col-sm-5 g-0" style={{ marginRight: "9.3em" }}>
           <Input
             label="First Name"
@@ -138,6 +175,7 @@ const ProfileSettings = () => {
           />
         </div>
       </div>
+
       <Input
         label="Location"
         name="location"
@@ -146,16 +184,52 @@ const ProfileSettings = () => {
         value={payload["location"]}
         onChange={(e) => handleChange(e)}
       />
-      <label>Update Profile Picture</label>
-      <FileInput
-        btnName="upload"
-        name="profilePic"
-        color="primary"
-        imageIds={payload["profilePic"]}
-        error={errors["profilePic"]}
-        onChange={(e) => handleChange(e)}
-        onClick={(e) => handleClick(e)}
-      />
+
+      <div
+        className="card my-1 mb-3"
+        style={{ width: "18rem", marginLeft: "0.8rem" }}
+      >
+        {Object.keys(currentProfilePic).length > 0 && (
+          <img
+            src={`data:${currentProfilePic.contentType};base64,${currentProfilePic.imageBase64}`}
+          />
+        )}
+        {Object.keys(currentProfilePic).length === 0 && (
+          <img src="/NoUserImagePlaceholder.png" />
+        )}
+        <div className="card-body">
+          <button
+            className="btn btn-primary me-3"
+            name="updateProfilePic"
+            onClick={(e) => handleClick(e)}
+          >
+            Update
+          </button>
+          <button
+            className="btn btn-primary"
+            name="removeProfilePic"
+            onClick={(e) => handleClick(e)}
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+
+      {isUploading && (
+        <>
+          <label>Update Profile Picture</label>
+          <FileInput
+            btnName="upload"
+            name="profilePic"
+            color="primary"
+            success={didUploaded}
+            imageIds={payload["profilePic"]}
+            error={errors["profilePic"]}
+            onChange={(e) => handleChange(e)}
+            onClick={(e) => handleClick(e)}
+          />
+        </>
+      )}
       <TextArea
         name="aboutYourself"
         label="About Yourself"

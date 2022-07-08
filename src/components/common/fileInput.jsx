@@ -5,6 +5,7 @@ const FileInput = ({
   btnName,
   error,
   imageIds,
+  success,
   color = "success",
   ...rest
 }) => {
@@ -39,7 +40,7 @@ const FileInput = ({
           <span>{error}</span>
         </p>
       )}
-      {imageIds?.length > 0 && (
+      {success && imageIds.length > 0 && (
         <p className={`text-${color} mt-2`}>
           <InfoCircleFilled
             style={{
