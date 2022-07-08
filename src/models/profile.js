@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 export const ProfileViewModel = {
+  _id: "",
   firstName: "",
   lastName: "",
   location: "",
@@ -10,10 +11,11 @@ export const ProfileViewModel = {
 
 export const mapModelToView = (source) => {
   return {
+    _id: source?._id,
     firstName: source?.first_name,
     lastName: source?.last_name,
     location: source?.location,
-    profilePic: [],
+    profilePic: source?.profile_image ? [source?.profile_image] : [],
     aboutYourself: source?.about_yourself,
   };
 };
@@ -36,7 +38,6 @@ export const validateProperty = (name, value) => {
 };
 
 export const validateProfilePic = (name, image) => {
-  console.log(image);
   const schema = Joi.object({
     [name]: Joi.array()
       .min(1)
@@ -51,6 +52,7 @@ export const validateProfile = (payload) => {
   const schema = Joi.object(profileSchema);
   let profile = { ...payload };
 
+  delete profile["_id"];
   delete profile["profilePic"];
   delete profile["lastName"];
   return schema.validate(profile, { abortEarly: false });

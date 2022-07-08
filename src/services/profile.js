@@ -8,9 +8,9 @@ export async function getProfile() {
   return profile.data;
 }
 
-export async function getProfileImage(profileId) {
+export async function getProfileImage(imageId) {
   const profileImage = await axios.get(
-    `${baseUrl}/upload-images/profile-image/${profileId}`
+    `${baseUrl}/upload-images/profile-image/${imageId}`
   );
 
   return profileImage.data;
@@ -28,14 +28,22 @@ export async function postProfileImage(payload) {
   return imageId.data;
 }
 
+export async function deleteProfilePic(profilePicId) {
+  const res = await axios.delete(
+    `${baseUrl}/upload-images/profile-image/${profilePicId}`
+  );
+
+  return res.status;
+}
+
 export async function postProfile(payload) {
   const profile = await axios.post(`${baseUrl}/profiles`, payload);
 
   return profile.data;
 }
 
-export async function updateProfile(profileId, payload) {
-  const res = await axios.put(`${baseUrl}/profiles/${profileId}`, payload);
+export async function updateProfile(payload) {
+  const res = await axios.put(`${baseUrl}/profiles/${payload._id}`, payload);
 
   return res.data;
 }

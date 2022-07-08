@@ -4,6 +4,7 @@ import {
 } from "../../../../resources/homePage";
 import ProgressBarSection from "../../../helpers/progressBarSection";
 import BadgeSection from "../../../helpers/badgeSection";
+import captilizeString from "../../../../utills/captilizeString";
 
 const SkillsSection = ({ skills }) => {
   return (
@@ -11,13 +12,11 @@ const SkillsSection = ({ skills }) => {
       <h3>{MYSKILLS}</h3>
       <p>{SKILLSSECTIONDESCRIPTION}</p>
       <hr />
-      {skills.map(({ _id, framework, language, ...rest }) => {
+      {skills.map(({ _id, skill, ...rest }) => {
         return (
           <div key={_id} className="mb-5">
             <div>
-              <h4 className="d-inline">
-                {framework ? framework.name : language.name}
-              </h4>
+              <h4 className="d-inline">{captilizeString(skill)}</h4>
               <BadgeSection {...rest} />
             </div>
             <ProgressBarSection {...rest} />
