@@ -16,10 +16,7 @@ const ProjectModalSkillsPage = ({ skills, onChange, payload, error }) => {
           <span>{error}</span>
         </p>
       )}
-      {skills.map(({ _id, framework, language }) => {
-        const skill = framework
-          ? captilizeString(framework.name)
-          : captilizeString(language.name);
+      {skills.map(({ _id, skill }) => {
         return (
           <div key={_id} className="form-check">
             <input
@@ -27,10 +24,13 @@ const ProjectModalSkillsPage = ({ skills, onChange, payload, error }) => {
               type="checkbox"
               name="techstack"
               id={skill}
+              value={payload[skill]}
               onChange={onChange}
               checked={payload[skill]}
             />
-            <label className="form-check-label ms-2 fs-5">{skill}</label>
+            <label className="form-check-label ms-2 fs-5">
+              {captilizeString(skill)}
+            </label>
           </div>
         );
       })}
