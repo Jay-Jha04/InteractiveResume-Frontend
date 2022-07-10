@@ -1,15 +1,17 @@
-import axios from "axios";
-
-const baseUrl = process.env.REACT_APP_INTERACTIVERESUME_BASEURL;
+import http from "./http";
 
 export async function getExperiences() {
-  const experiences = await axios.get(`${baseUrl}/experiences`);
+  const experiences = await http.get(`/experiences`);
 
   return experiences.data;
 }
 
 export async function postExperience(experience) {
-  const experiences = await axios.post(`${baseUrl}/experiences`, experience);
+  try {
+    const experiences = await http.post(`/experiences`, experience);
 
-  return experiences.data;
+    return experiences.data;
+  } catch (error) {
+    throw error;
+  }
 }

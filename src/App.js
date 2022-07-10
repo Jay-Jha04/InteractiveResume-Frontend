@@ -9,17 +9,28 @@ import ProjectSettings from "./components/admin/project/projectSettings";
 import ExperienceSettings from "./components/admin/experience/experienceSettings";
 import SkillSettings from "./components/admin/skill/skillSettings";
 import ProfileSettings from "./components/admin/profileSettings";
+import Login from "./components/login";
+import Logout from "./components/logout";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "antd/dist/antd.less";
 import "./App.css";
+import { getToken } from "./services/auth";
+import ProtectedRoute from "./components/common/protectedRoute";
 
 function App() {
   return (
     <div className="container">
-      {true && <TopNavbar />}
+      {getToken() && <TopNavbar />}
       <Routes>
-        <Route path="/admin-dashboard" element={<Dashboard />}>
+        <Route
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        >
           <Route path="projects" element={<ProjectSettings />} />
           <Route path="experiences" element={<ExperienceSettings />} />
           <Route path="skills" element={<SkillSettings />} />
@@ -35,6 +46,8 @@ function App() {
           <Route path="home" element={<Home />} />
           <Route path="*" element={<Navigate to="/profile/home" replace />} />
         </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<Navigate to="/profile/home" replace />} />
       </Routes>
     </div>
