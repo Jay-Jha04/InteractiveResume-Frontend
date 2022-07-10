@@ -2,7 +2,7 @@ import axios from "axios";
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_INTERACTIVERESUME_BASEURL,
-  timeout: 1000,
+  timeout: 10000,
 });
 
 export const setTokenHeader = (token) => {
