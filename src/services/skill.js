@@ -1,15 +1,13 @@
-import axios from "axios";
-
-const baseUrl = process.env.REACT_APP_INTERACTIVERESUME_BASEURL;
+import http from "./http";
 
 export async function getSkills() {
-  const skills = await axios.get(`${baseUrl}/skills`);
+  const skills = await http.get(`/skills`);
 
   return skills.data;
 }
 
 export async function postSkill(payload) {
-  const skill = await axios.post(`${baseUrl}/skills`, payload);
+  const skill = await http.post(`/skills`, payload);
 
   return skill.data;
 }

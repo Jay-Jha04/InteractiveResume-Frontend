@@ -15,10 +15,21 @@ const TopNavbar = () => {
       </Link>
       <Link
         to="/admin-dashboard/projects"
-        className="navbar-brand mx-1 port-item"
-        style={{ textDecoration: "none", color: "white" }}
+        className="navbar-brand port-item position-absolute"
+        style={{ textDecoration: "none", color: "white", left: "7rem" }}
       >
         Dashboard
+      </Link>
+      <Link
+        to="/logout"
+        className="navbar-brand port-item position-absolute"
+        style={{
+          textDecoration: "none",
+          color: "white",
+          right: "2rem",
+        }}
+      >
+        Logout
       </Link>
     </nav>
   );
